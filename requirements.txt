@@ -1,0 +1,8 @@
+aiogram>=3.13.1
+python-dotenv>=1.0.1
+watchdog>=5.0.2
+fastapi>=0.68.0
+pydantic>=1.8.0
+uvicorn>=0.15.0
+nest-asyncio>=1.6.0
+python-multipart
