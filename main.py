@@ -9,21 +9,28 @@ import asyncio
 
 import uvicorn
 from bot import init_bot
-from models.Coordinates import UploadVideoForPredict
+from models.Coordinates import SectionCoordinate
+from yolo.detector import detect_warning_on_video
 
 app = FastAPI(
     title="Мой API",
-    description="Это описание моего API",
+    description="Api for ural code hackaton",
     version="1.0.0",
 )
+s_coordinates: SectionCoordinate = None
 
-@app.get("/test")
+@app.get("/ready")
 async def upload_video():
-    return JSONResponse({"suck":"cock"})
+    return JSONResponse(True)
+
+@app.post("/coordinate")
+async def create_coordinate(coordinates: SectionCoordinate):
+    s_coordinates = coordinates
+    print(coordinates)
+    return JSONResponse({"succes":True})
 
 @app.post("/upload")
 async def upload_video(
-    coordinates: UploadVideoForPredict,
     file: UploadFile 
 ):
     try:
@@ -33,9 +40,10 @@ async def upload_video(
         file_path = os.path.join(project_dir, filename)
         with open(file_path, "wb") as f:
             f.write(bytes_io)
+        detect_warning_on_video(file_path)
+        os.remove(file_path)
         return JSONResponse(content={
-            "message": "Файл и координаты успешно загружены",
-            "coordinates": coordinates.dict()
+            "succes": True,
         })
     except Exception as e:
         return {"error": str(e)}

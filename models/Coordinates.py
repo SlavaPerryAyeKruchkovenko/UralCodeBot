@@ -4,7 +4,7 @@ class Point(BaseModel):
     x: float
     y: float
     
-class UploadVideoForPredict(BaseModel):
+class SectionCoordinate(BaseModel):
     doorCoors: list[Point]
     sectionCoors: list[Point]
     
