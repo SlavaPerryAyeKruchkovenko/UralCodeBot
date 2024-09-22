@@ -40,7 +40,7 @@ async def upload_video(
         file_path = os.path.join(project_dir, filename)
         with open(file_path, "wb") as f:
             f.write(bytes_io)
-        detect_warning_on_video(file_path)
+        await detect_warning_on_video(file_path)
         os.remove(file_path)
         return JSONResponse(content={
             "succes": True,
