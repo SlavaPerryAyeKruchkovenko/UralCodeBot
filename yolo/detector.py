@@ -1,14 +1,19 @@
+import io
 import os
+from pathlib import Path
 import cv2
+from matplotlib import pyplot as plt
+import numpy as np
 from ultralytics import YOLO
-
+from PIL import Image
+from aiogram.types import FSInputFile
 from bot import send_photo_for_subscribers
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
 model = YOLO(os.path.join(project_dir, "best.pt"))
 names = {0: "Door", 1: "Helmet", 2: "Human", 3: "Robot"}
 helmet_error_count = 0
-throatlehelmetCount = 1
+throatlehelmetCount = 10
 
 
 async def detect_warning_on_video(video_path: str) -> str:
@@ -47,6 +52,7 @@ def get_tile_boxes(result):
 
 
 async def precessing_helmet_tile(boxes, result):
+    global helmet_error_count
     human_boxes = [
         box for box in boxes if box["class_id"] == 2 and box["confidence"] > 0.5
     ]
@@ -55,7 +61,13 @@ async def precessing_helmet_tile(boxes, result):
         helmet_error_count += 1
     if helmet_error_count >= throatlehelmetCount:
         helmet_error_count = 0
-        await send_photo_for_subscribers(result.plot())
+        img = Image.fromarray(np.uint8(result.plot()))
+        file_name = "result_image.png"
+        img.save(file_name, format='PNG')
+        file_path = Path(file_name).resolve()
+        photo = FSInputFile(file_path, filename="result.png")
+        await send_photo_for_subscribers(photo,"Обнуружен человек без каски в секции 1")
+        os.remove(file_path)
 
 
 async def processing_tile(result):

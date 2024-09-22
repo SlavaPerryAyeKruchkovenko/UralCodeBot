@@ -54,9 +54,10 @@ async def handle_text(message):
     scenarios = context.get_scenraios_by_user(user)
     await execute_scenarios(scenarios, user, bot, context, message)
 
-async def send_photo_for_subscribers(photo):
+async def send_photo_for_subscribers(photo,message):
     for user in context.users:
         if user.get_is_subscribe():
+            await bot.send_message(user.get_id(), message)
             await bot.send_photo(user.get_id(), photo)
 
 async def init_bot() -> None:
