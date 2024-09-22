@@ -28,6 +28,13 @@ async def create_coordinate(coordinates: SectionCoordinate):
     s_coordinates = coordinates
     return JSONResponse({"succes":True})
 
+@app.get('/test')
+async def test_detect():
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(project_dir, "Тест.mp4")
+    await detect_warning_on_video(file_path,s_coordinates)
+    return JSONResponse({"succes":True})
+
 @app.post("/upload")
 async def upload_video(
     file: UploadFile 

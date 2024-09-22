@@ -12,13 +12,13 @@ from models.Coordinates import Point, SectionCoordinate
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
 model = YOLO(os.path.join(project_dir, "best.pt"))
-names = {0: "Door", 1: "Helmet", 2: "Human", 3: "Robot"}
+names = {0: "door", 1: "helmet", 2: "person", 3: "robot"}
 helmet_error_count = 0
 throatlehelmetCount = 10
 throatleDoorCount = 5
 door_is_open_send = False
 door_error_count = 0
-door_max_luft = (10, 20)
+door_max_luft = (20, 10)
 
 
 async def detect_warning_on_video(
@@ -103,8 +103,8 @@ def find_left_bottom_corner(doorCoors: list[Point]) -> Point:
     for point in doorCoors:
         x = point.x
         y = point.y
-        if (x < left_bottom_corner[0]) or (
-            x == left_bottom_corner[0] and y > left_bottom_corner[1]
+        if (x < left_bottom_corner.x) or (
+            x == left_bottom_corner.x and y > left_bottom_corner.y
         ):
             left_bottom_corner = point
 
