@@ -1,13 +1,12 @@
 import os
 from typing import Union
 import uuid
-from fastapi import FastAPI, File, Form, UploadFile
+from fastapi import Body, FastAPI, File, Form, UploadFile
 from starlette.responses import JSONResponse
 from pydantic import BaseModel
 import nest_asyncio
 import asyncio
 
-import uvicorn
 from bot import init_bot
 from models.Coordinates import SectionCoordinate
 from yolo.detector import detect_warning_on_video
@@ -25,8 +24,8 @@ async def upload_video():
 
 @app.post("/coordinate")
 async def create_coordinate(coordinates: SectionCoordinate):
+    global s_coordinates
     s_coordinates = coordinates
-    print(coordinates)
     return JSONResponse({"succes":True})
 
 @app.post("/upload")
@@ -40,7 +39,7 @@ async def upload_video(
         file_path = os.path.join(project_dir, filename)
         with open(file_path, "wb") as f:
             f.write(bytes_io)
-        await detect_warning_on_video(file_path)
+        await detect_warning_on_video(file_path,s_coordinates)
         os.remove(file_path)
         return JSONResponse(content={
             "succes": True,
